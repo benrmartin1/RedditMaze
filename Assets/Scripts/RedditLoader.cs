@@ -52,8 +52,7 @@ public class RedditLoader : MonoBehaviour
     private void SetTime(string time)
     {
         string[] times = { "hour", "day", "week", "month", "year", "all" };
-        if(Array.IndexOf(times, time) >= 0)
-{
+        if(Array.IndexOf(times, time) >= 0) {
             url = url.Replace("<time>", time);
         }
     }

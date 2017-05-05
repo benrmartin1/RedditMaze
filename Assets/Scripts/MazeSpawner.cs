@@ -7,17 +7,23 @@ public class MazeSpawner : MonoBehaviour {
     public Transform wall;
     public Transform wallParent;
 
+	public Transform floor;
+	public Transform mazeBase;
+	public Transform exit;
+
     private List<string> urls;
-    private int size = 10;
+    private int size = 5;
+
+    const int maxPictures = 50;
 
     private List<Transform> walls = new List<Transform>();
 
-    // Use this for initialization
     void Start ()
     {
         GenerateMaze();
-
-        StartCoroutine(GetComponent<RedditLoader>().GetJSON("catsstandingup", "month", walls.Count));
+		GenerateFloor();
+		GenerateExit ();
+        StartCoroutine(GetComponent<RedditLoader>().GetJSON("earthporn", "month", Mathf.Min(maxPictures, walls.Count)));
 	}
 
     private void GenerateMaze()
@@ -55,6 +61,24 @@ public class MazeSpawner : MonoBehaviour {
         }
     }
 
+	private void GenerateFloor() {
+		Transform ground = Instantiate (floor, mazeBase);
+		Vector3 scale = ground.localScale; 
+		scale.x *= size / 10.0f;
+		scale.z *= size / 10.0f;
+		ground.localScale = scale;
+		ground.localPosition = new Vector3 (size / 2.0f, -0.5f, size / 2.0f);
+	}
+
+	private void GenerateExit() {
+		Transform theExit = Instantiate (exit, mazeBase);
+//		Vector3 scale = ground.localScale; 
+//		scale.x *= size / 10.0f;
+//		scale.z *= size / 10.0f;
+//		ground.localScale = scale;
+		theExit.localPosition = new Vector3 (size, 0, size);
+	}
+
     bool loaded = false;
     void Update ()
     {
@@ -69,15 +93,21 @@ public class MazeSpawner : MonoBehaviour {
     IEnumerator LoadPictures()
     {
         List<Texture2D> texs = new List<Texture2D>();
+
+
         for(int i = 0; i < walls.Count; i++)
         {
             WWW www = new WWW(urls[i %  urls.Count]);
             yield return www;
 
-            walls[i].GetComponent<Renderer>().material.mainTexture = new Texture2D(0,0);
+			Texture2D tex = new Texture2D (0, 0); 
+			walls [i].GetComponent<Renderer> ().material.mainTexture = tex;
+
             www.LoadImageIntoTexture(walls[i].GetComponent<Renderer>().material.mainTexture as Texture2D);
 
-            Debug.Log((float)(i+1 )/ walls.Count);
+            Debug.Log((float)(i+1)/ walls.Count);
+
+			yield return null;
         }
 
       
