@@ -12,7 +12,8 @@ public class MazeSpawner : MonoBehaviour {
 	public Transform exit;
 
     private List<string> urls;
-    private int size = 5;
+    public int size = 8;
+	public string subreddit = "earthporn";
 
     const int maxPictures = 50;
 
@@ -23,7 +24,7 @@ public class MazeSpawner : MonoBehaviour {
         GenerateMaze();
 		GenerateFloor();
 		GenerateExit ();
-        StartCoroutine(GetComponent<RedditLoader>().GetJSON("earthporn", "month", Mathf.Min(maxPictures, walls.Count)));
+        StartCoroutine(GetComponent<RedditLoader>().GetJSON(subreddit, "month", Mathf.Min(maxPictures, walls.Count)));
 	}
 
     private void GenerateMaze()
